@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面</title>
+</head>
+<body>
+    <h1>页面元素测试</h1>
+    <button onclick="testElements()">测试页面元素</button>
+    <button onclick="testAPI()">测试API连接</button>
+
+    <div id="testResult" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+
+    <script>
+        function testElements() {
+            const resultDiv = document.getElementById('testResult');
+            let results = [];
+
+            const elements = [
+                'progressArea',
+                'progressBar',
+                'progressFill',
+                'progressText',
+                'result',
+                'topicsSection',
+                'contentSection',
+                'titlesSection',
+                'interactionSection',
+                'topics',
+                'content',
+                'titles',
+                'interaction'
+            ];
+
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    results.push(`✅ ${id}: 存在`);
+                } else {
+                    results.push(`❌ ${id}: 不存在`);
+                }
+            });
+
+            resultDiv.innerHTML = '<h2>元素测试结果:</h2><pre>' + results.join('\n') + '</pre>';
+        }
+
+        async function testAPI() {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.innerHTML = '<h2>测试API连接...</h2>';
+
+            try {
+                const response = await fetch('http://localhost:8080/api/generate-topics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        topic: '测试主题',
+                        platform: '小红书',
+                        audience: '测试用户'
+                    })
+                });
+
+                const result = await response.json();
+                resultDiv.innerHTML = '<h2>✅ API连接成功!</h2><pre>' + JSON.stringify(result, null, 2) + '</pre>';
+            } catch (error) {
+                resultDiv.innerHTML = '<h2>❌ API连接失败!</h2><p>' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

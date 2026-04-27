@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI内容运营助手</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+        }
+
+        #progressArea {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #progressBar {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 25px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        #progressFill {
+            background-color: #007bff;
+            height: 100%;
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+        }
+
+        #progressText {
+            font-size: 16px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .topic-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .topic-card:hover {
+            background-color: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .topic-card.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        .copy-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .copy-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .regenerate-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .regenerate-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .action-buttons button {
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .info-text {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+        }
+
+        .content-part {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+
+        .content-part strong {
+            color: #007bff;
+        }
+
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #007bff; margin-bottom: 30px;">🤖 AI内容运营助手</h1>
+
+    <form id="contentForm">
+        <div class="form-group">
+            <label for="topic">内容主题：</label>
+            <input type="text" id="topic" name="topic" required placeholder="例如：原神">
+        </div>
+
+        <div class="form-group">
+            <label for="platform">平台：</label>
+            <select id="platform" name="platform" required>
+                <option value="">请选择平台</option>
+                <option value="小红书">小红书</option>
+                <option value="抖音">抖音</option>
+                <option value="B站">B站</option>
+                <option value="TikTok">TikTok</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="audience">目标用户：</label>
+            <input type="text" id="audience" name="audience" required placeholder="例如：女性玩家">
+        </div>
+
+        <button type="submit" style="width: 100%;">🚀 生成内容方案</button>
+        <p class="info-text">💡 预计需要15-30秒，请耐心等待</p>
+    </form>
+
+    <!-- 生成进度区域 -->
+    <div id="progressArea" style="display: none;">
+        <div id="progressBar">
+            <div id="progressFill"></div>
+        </div>
+        <div id="progressText">准备生成...</div>
+    </div>
+
+    <!-- 结果展示区域 -->
+    <div id="result" style="display: none; margin-top: 30px;">
+        <div class="section" id="topicsSection" style="display: none;">
+            <h3>💡 选题建议</h3>
+            <div id="topics"></div>
+            <button class="regenerate-btn" onclick="regenerateContent('topics')">🔄 重新生成选题</button>
+        </div>
+
+        <div class="section" id="contentSection" style="display: none;">
+            <h3>📄 内容框架</h3>
+            <div id="content"></div>
+            <button class="regenerate-btn" onclick="regenerateContent('content')">🔄 重新生成内容</button>
+        </div>
+
+        <div class="section" id="titlesSection" style="display: none;">
+            <h3>✨ 标题优化</h3>
+            <div id="titles"></div>
+            <button class="regenerate-btn" onclick="regenerateContent('titles')">🔄 重新生成标题</button>
+        </div>
+
+        <div class="section" id="interactionSection" style="display: none;">
+            <h3>💬 互动设计</h3>
+            <div id="interaction"></div>
+            <button class="regenerate-btn" onclick="regenerateContent('interaction')">🔄 重新生成互动</button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-success" onclick="regenerateAll()">🔄 重新生成全部</button>
+            <button class="btn-info" onclick="copyAll()">📋 复制全部内容</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('contentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('表单提交');
+
+            // 获取表单数据
+            const formData = {
+                topic: document.getElementById('topic').value,
+                platform: document.getElementById('platform').value,
+                audience: document.getElementById('audience').value
+            };
+
+            console.log('表单数据:', formData);
+
+            // 验证表单数据
+            if (!formData.topic || !formData.platform || !formData.audience) {
+                alert('请填写所有必填字段！');
+                return;
+            }
+
+            // 开始生成流程
+            await generateContent(formData);
+        });
+
+        // 生成内容的完整流程
+        async function generateContent(formData) {
+            console.log('开始生成内容流程');
+
+            const steps = [
+                { name: 'topics', text: '📝 正在生成选题...', api: '/api/generate-topics' },
+                { name: 'content', text: '📄 正在生成内容...', api: '/api/generate-content' },
+                { name: 'titles', text: '✨ 正在优化标题...', api: '/api/optimize-titles' },
+                { name: 'interaction', text: '💬 正在设计互动...', api: '/api/design-interaction' }
+            ];
+
+            console.log('显示进度区域');
+
+            // 显示进度区域
+            const progressArea = document.getElementById('progressArea');
+            const result = document.getElementById('result');
+
+            if (!progressArea || !result) {
+                console.error('找不到进度区域或结果区域');
+                alert('页面元素加载失败，请刷新页面重试');
+                return;
+            }
+
+            progressArea.style.display = 'block';
+            result.style.display = 'none';
+
+            // 隐藏所有结果section
+            const sections = ['topicsSection', 'contentSection', 'titlesSection', 'interactionSection'];
+            sections.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.style.display = 'none';
+            });
+
+            // 保存全局数据
+            window.generatedData = {
+                topic: formData.topic,
+                platform: formData.platform,
+                audience: formData.audience,
+                selectedTopic: null,
+                content: null
+            };
+
+            console.log('全局数据已保存:', window.generatedData);
+
+            // 依次执行每个步骤
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                console.log(`执行步骤 ${i + 1}/${steps.length}: ${step.name}`);
+
+                // 更新进度
+                updateProgress((i + 1) / steps.length * 100, step.text);
+
+                try {
+                    console.log(`调用API: ${step.api}`);
+
+                    const requestBody = {
+                        topic: formData.topic,
+                        platform: formData.platform,
+                        audience: formData.audience
+                    };
+
+                    if (window.generatedData.selectedTopic) {
+                        requestBody.selectedTopic = window.generatedData.selectedTopic;
+                    }
+                    if (window.generatedData.content) {
+                        requestBody.content = window.generatedData.content;
+                    }
+
+                    console.log('请求数据:', requestBody);
+
+                    // 调用API
+                    const response = await fetch(`http://localhost:8080${step.api}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
+                    console.log('API响应状态:', response.status);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误: ${response.status}`);
+                    }
+
+                    const responseText = await response.text();
+                    console.log('API响应:', responseText);
+
+                    let result;
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error('JSON解析失败:', e);
+                        throw new Error('API响应解析失败: ' + responseText);
+                    }
+
+                    if (result.success) {
+                        console.log(`步骤 ${step.name} 成功`);
+                        // 显示结果
+                        displayResult(step.name, result.data);
+
+                        // 保存数据供下一步使用
+                        if (step.name === 'topics') {
+                            if (result.data && result.data[0]) {
+                                window.generatedData.selectedTopic = result.data[0].title;
+                                console.log('已保存选题:', window.generatedData.selectedTopic);
+                            }
+                        }
+                    } else {
+                        throw new Error(result.error || '未知错误');
+                    }
+                } catch (error) {
+                    console.error(`步骤 ${step.name} 失败:`, error);
+                    alert(`生成失败 (${step.name}): ${error.message}\n请确保后端服务器正在运行，并检查浏览器控制台了解详细信息。`);
+                    progressArea.style.display = 'none';
+                    return;
+                }
+            }
+
+            console.log('所有步骤完成');
+            // 隐藏进度区域，显示结果
+            progressArea.style.display = 'none';
+            result.style.display = 'block';
+        }
+
+        // 更新进度条
+        function updateProgress(percentage, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+
+            if (progressFill) {
+                progressFill.style.width = percentage + '%';
+            } else {
+                console.error('找不到进度条元素');
+            }
+
+            if (progressText) {
+                progressText.textContent = text;
+            } else {
+                console.error('找不到进度文本元素');
+            }
+
+            console.log(`进度更新: ${percentage}% - ${text}`);
+        }
+
+        // 显示结果
+        function displayResult(type, data) {
+            console.log(`显示结果: ${type}`, data);
+
+            const section = document.getElementById(type + 'Section');
+            if (!section) {
+                console.error(`找不到section: ${type}Section`);
+                return;
+            }
+
+            section.style.display = 'block';
+
+            try {
+                switch (type) {
+                    case 'topics':
+                        if (Array.isArray(data)) {
+                            document.getElementById('topics').innerHTML = data.map((item, index) => `
+                                <div class="topic-card" onclick="selectTopic(${index}, '${item.title.replace(/'/g, "\\'")}')">
+                                    <strong>${index + 1}. ${item.title}</strong><br>
+                                    <small>💡 理由：${item.reason}</small><br>
+                                    <small style="color: #666;">📌 方向：${item.direction}</small>
+                                </div>
+                            `).join('');
+                        }
+                        break;
+
+                    case 'content':
+                        window.generatedData.content = data;
+                        const structure = Array.isArray(data.structure) ? data.structure : [];
+                        document.getElementById('content').innerHTML = `
+                            <div class="content-part">
+                                <strong>🎯 开头：</strong><br>
+                                ${data.opening || '未生成开头'}
+                            </div>
+                            <div class="content-part">
+                                <strong>📝 正文结构：</strong>
+                                <ol>
+                                    ${structure.map(item => `<li>${item}</li>`).join('')}
+                                </ol>
+                            </div>
+                            <div class="content-part">
+                                <strong>🎬 结尾：</strong><br>
+                                ${data.ending || '未生成结尾'}
+                            </div>
+                        `;
+                        break;
+
+                    case 'titles':
+                        const titles = Array.isArray(data) ? data : [];
+                        document.getElementById('titles').innerHTML = titles.map(item => `
+                            <div class="content-part">
+                                <strong>${item.type || '标题'}：</strong>${item.title || '未生成标题'}
+                                <button class="copy-btn" onclick="copyToClipboard('${(item.title || '').replace(/'/g, "\\'")}')">复制</button>
+                            </div>
+                        `).join('');
+                        break;
+
+                    case 'interaction':
+                        const comments = Array.isArray(data.comments) ? data.comments : [];
+                        const questions = Array.isArray(data.questions) ? data.questions : [];
+                        document.getElementById('interaction').innerHTML = `
+                            <div class="content-part">
+                                <strong>💬 评论区话术：</strong>
+                                <ul>
+                                    ${comments.map(comment => `
+                                        <li>
+                                            ${comment}
+                                            <button class="copy-btn" onclick="copyToClipboard('${comment.replace(/'/g, "\\'")}')">复制</button>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            <div class="content-part">
+                                <strong>❓ 引导互动问题：</strong>
+                                <ul>
+                                    ${questions.map(question => `<li>${question}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="content-part" style="background-color: #e3f2fd;">
+                                <strong>👍 引导话术：</strong><br>
+                                ${data.engagement || '未生成引导话术'}
+                            </div>
+                        `;
+                        break;
+                }
+            } catch (error) {
+                console.error('显示结果时出错:', error);
+                console.error('错误类型:', type);
+                console.error('错误数据:', data);
+            }
+        }
+
+        // 选择选题
+        function selectTopic(index, title) {
+            console.log('选择选题:', index, title);
+
+            // 更新UI
+            const cards = document.querySelectorAll('.topic-card');
+            cards.forEach((card, i) => {
+                if (i === index) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+
+            // 更新全局数据
+            window.generatedData.selectedTopic = title;
+            console.log('已更新选题:', window.generatedData.selectedTopic);
+        }
+
+        // 重新生成单个模块
+        async function regenerateContent(type) {
+            if (confirm(`确定要重新生成${type}吗？`)) {
+                const formData = {
+                    topic: window.generatedData.topic,
+                    platform: window.generatedData.platform,
+                    audience: window.generatedData.audience
+                };
+
+                // 临时保存当前状态
+                const originalSelectedTopic = window.generatedData.selectedTopic;
+                const originalContent = window.generatedData.content;
+
+                try {
+                    const apiMap = {
+                        'topics': '/api/generate-topics',
+                        'content': '/api/generate-content',
+                        'titles': '/api/optimize-titles',
+                        'interaction': '/api/design-interaction'
+                    };
+
+                    const response = await fetch(`http://localhost:8080${apiMap[type]}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        displayResult(type, result.data);
+
+                        // 如果是重新生成内容，更新全局数据
+                        if (type === 'content') {
+                            window.generatedData.content = result.data;
+                        }
+                    } else {
+                        alert('生成失败: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('重新生成失败:', error);
+                    alert('重新生成失败: ' + error.message);
+                    // 恢复原始状态
+                    window.generatedData.selectedTopic = originalSelectedTopic;
+                    window.generatedData.content = originalContent;
+                }
+            }
+        }
+
+        // 重新生成全部
+        function regenerateAll() {
+            if (confirm('确定要重新生成全部内容吗？')) {
+                document.getElementById('contentForm').dispatchEvent(new Event('submit'));
+            }
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // 创建临时提示
+                const toast = document.createElement('div');
+                toast.textContent = '✅ 已复制到剪贴板！';
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #28a745;
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 8px;
+                    z-index: 1000;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    font-weight: 500;
+                `;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        // 复制全部内容
+        function copyAll() {
+            const topics = document.getElementById('topics').innerText;
+            const content = document.getElementById('content').innerText;
+            const titles = document.getElementById('titles').innerText;
+            const interaction = document.getElementById('interaction').innerText;
+
+            const allContent = `
+💡 选题建议：
+${topics}
+
+📄 内容框架：
+${content}
+
+✨ 标题优化：
+${titles}
+
+💬 互动设计：
+${interaction}
+            `;
+
+            copyToClipboard(allContent.trim());
+        }
+
+        // 页面加载完成后的检查
+        window.addEventListener('load', function() {
+            console.log('页面加载完成');
+
+            const requiredElements = [
+                'progressArea', 'progressBar', 'progressFill', 'progressText',
+                'result', 'topicsSection', 'contentSection', 'titlesSection', 'interactionSection',
+                'topics', 'content', 'titles', 'interaction'
+            ];
+
+            const missingElements = [];
+            requiredElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    missingElements.push(id);
+                }
+            });
+
+            if (missingElements.length > 0) {
+                console.error('缺少页面元素:', missingElements);
+                console.warn('页面可能无法正常工作，请检查HTML结构');
+            } else {
+                console.log('✅ 所有必需的页面元素都存在');
+            }
+        });
+    </script>
+</body>
+</html>
