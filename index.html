@@ -269,6 +269,19 @@
     </div>
 
     <script>
+        // 自动检测API地址
+        const API_BASE_URL = (() => {
+            const hostname = window.location.hostname;
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:8080';
+            } else {
+                // 生产环境使用Vercel的相对路径
+                return ''; // 使用相对路径
+            }
+        })();
+
+        console.log('API基础地址:', API_BASE_URL || '(相对路径)');
+
         document.getElementById('contentForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('表单提交');
@@ -362,8 +375,12 @@
 
                     console.log('请求数据:', requestBody);
 
+                    // 构建完整的API URL
+                    const apiUrl = API_BASE_URL + step.api;
+                    console.log('完整API URL:', apiUrl);
+
                     // 调用API
-                    const response = await fetch(`http://localhost:8080${step.api}`, {
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -569,7 +586,10 @@
                         'interaction': '/api/design-interaction'
                     };
 
-                    const response = await fetch(`http://localhost:8080${apiMap[type]}`, {
+                    const apiUrl = API_BASE_URL + apiMap[type];
+                    console.log('重新生成API URL:', apiUrl);
+
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

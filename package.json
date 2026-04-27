@@ -1,11 +1,12 @@
 {
   "name": "ai-content-assistant",
   "version": "1.0.0",
-  "description": "AI内容运营助手后端服务",
+  "description": "AI内容运营助手 - 支持本地和Vercel部署",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "vercel-build": "echo 'Vercel build'"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -15,5 +16,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
