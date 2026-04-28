@@ -1,4 +1,4 @@
-const axios = require('axios');
+import axios from 'axios';
 
 // GLM API配置
 const GLM_API_KEY = process.env.GLM_API_KEY;
@@ -298,8 +298,4 @@ function getFallbackData(type, data = {}) {
     return fallbackData[type];
 }
 
-module.exports = {
-    buildGLMPrompt,
-    callGLM,
-    getFallbackData
-};
+export { buildGLMPrompt, callGLM, getFallbackData };

@@ -1,6 +1,6 @@
-const { buildGLMPrompt, callGLM, getFallbackData } = require('./utils');
+import { buildGLMPrompt, callGLM, getFallbackData } from './utils.js';
 
-export default async (req, res) => {
+export default async function handler(req, res) {
     // 设置CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,4 +56,4 @@ export default async (req, res) => {
             error: '生成选题失败: ' + error.message
         });
     }
-};
+}
